@@ -42,11 +42,13 @@
     return *(UInt8*)[self.metaData bytes];
 }
 
-- (void)setKey:(NSString *)key
+- (void)setKey:(UInt8)key
 {
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = [self.metaData mutableCopy];
+    if ([mutableMetaData length] < 1) [mutableMetaData increaseLengthBy:1];
+
     [mutableMetaData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&key length:1];
     [self setMetaData:[mutableMetaData copy]];
 }
@@ -61,6 +63,8 @@
     if (![[self class] isMutable]) return MIKMIDI_RAISE_MUTATION_ATTEMPT_EXCEPTION;
     
     NSMutableData *mutableMetaData = [self.metaData mutableCopy];
+    if ([mutableMetaData length] < 2) [mutableMetaData increaseLengthBy:2-[mutableMetaData length]];
+    
     [mutableMetaData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&scale length:1];
     [self setMetaData:[mutableMetaData copy]];
 }
